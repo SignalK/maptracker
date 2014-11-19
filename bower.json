@@ -1,0 +1,22 @@
+{
+  "name": "maptracker",
+  "version": "0.0.1",
+  "authors": [
+    "tjk@iki.fi"
+  ],
+  "description": "Map that tracks targets from a SignalK server",
+  "main": "index.html",
+  "license": "Apache 2",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "leaflet": "~0.7.3",
+    "components-font-awesome": "~4.2.0",
+    "L.EasyButton": "*"
+  }
+}
