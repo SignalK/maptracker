@@ -187,18 +187,17 @@
 
 
   signalKStream.on('data', function (_) {
+    var id = _.context.split('.')[1];
+    var aisData = targets[id];
+    if (!aisData) {
+      targets[id] = aisData = {
+        id: id,
+        show: true
+      };
+    };
     _.updates
         .forEach(function (update) {
           update.values.forEach(function (value) {
-            var id = update.context.split('.')[1];
-            var aisData = targets[id];
-            if (!aisData) {
-              targets[id] = aisData = {
-                id: id,
-                show: true
-              };
-            }
-            ;
             aisData.timestamp = new Date().getTime();
             if (value.path === 'navigation.position') {
               targets[id].position = new L.LatLng(value.value.latitude, value.value.longitude);
