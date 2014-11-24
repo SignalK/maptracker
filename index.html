@@ -132,10 +132,22 @@
     targetList.empty();
     targetsArray.forEach(function (target) {
       if (target.show) {
-        targetList.append('<tr><td>' + target.id + '</td><td>' + target.sog + '</td></tr>');
+        targetList.append('<tr><td>' + target.id + '</td><td>' + getName(target) + '</td><td>' +
+            target.sog +'</td></tr>');
       }
     });
     updateMarkers(multiPointForBounds, targetsArray);
+  }
+
+  function getName(aisData) {
+    if (aisData.vesselInfo) {
+      if (aisData.vesselInfo.name) {
+        if (aisData.vesselInfo.name.value) {
+          return aisData.vesselInfo.name.value;
+        }
+      }
+    }
+    return '-';
   }
 
   // Use Leaflet to implement a D3 geometric transformation.
@@ -194,6 +206,13 @@
         id: id,
         show: true
       };
+
+      $.ajax({
+        url: "http://" + window.location.host + "/api/v1/vessels/" + id,
+        async: true,
+        success: function(vesselInfo){
+          aisData.vesselInfo = vesselInfo;
+      }});
     };
     _.updates
         .forEach(function (update) {
