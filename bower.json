@@ -5,6 +5,9 @@
     "tjk@iki.fi"
   ],
   "description": "Map that tracks targets from a SignalK server",
+  "keywords": [
+    "signalk-ui"
+  ],
   "license": "Apache 2",
   "ignore": [
     "**/.*",
