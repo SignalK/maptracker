@@ -28,7 +28,7 @@
       font-family: sans-serif;
     }
   </style>
-  <script src="/signalk/stream/primus.js"></script>
+  <script src="/signalk/stream/v1/primus.js"></script>
   <script src="dist/map.js"></script>
   <script src="/bower_components/L.EasyButton/easy-button.js"></script>
   <link rel="stylesheet" href="/bower_components/leaflet/dist/leaflet.css">
@@ -208,7 +208,7 @@
       };
 
       $.ajax({
-        url: "http://" + window.location.host + "/api/v1/vessels/" + id,
+        url: "http://" + window.location.host + "/signalk/api/v1/vessels/" + id,
         async: true,
         success: function(vesselInfo){
           aisData.vesselInfo = vesselInfo;
