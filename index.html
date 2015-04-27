@@ -172,7 +172,8 @@
     paths: [
       'navigation.courseOverGroundTrue',
       'navigation.speedOverGround',
-      'navigation.position'
+      'navigation.position',
+      'name'
     ]
   };
 
@@ -241,6 +242,17 @@
               if (id === 'self') {
                 selfSpeed = (value.value * 1.94384).toFixed(2);
               }
+            }
+            if (value.path === 'name') {
+              if (!aisData.vesselInfo || !aisData.vesselInfo.name) {
+                aisData.vesselInfo = {
+                  name: {
+                    value: "-"
+                  }
+                };
+              }
+              aisData.vesselInfo.name.value = value.value;
+              doDraw = true;
             }
             ;
           });
