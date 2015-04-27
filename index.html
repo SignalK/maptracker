@@ -116,7 +116,7 @@
     };
     var threshold = new Date().getTime() - (2 * 60 * 1000);
     for (key in targets) {
-      if (targets[key].timestamp > threshold) {
+      if (targets[key].timestamp > threshold && targets[key].position) {
         targetsArray.push(targets[key]);
         multiPointForBounds.coordinates.push([targets[key].position.lng, targets[key].position.lat]);
       } else {
