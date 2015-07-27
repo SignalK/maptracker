@@ -19,6 +19,6 @@
   "dependencies": {
     "leaflet": "~0.7.3",
     "components-font-awesome": "~4.2.0",
-    "L.EasyButton": "*"
+    "Leaflet.EasyButton": "*"
   }
 }
