@@ -3,13 +3,17 @@
   "version": "0.0.1",
   "author": "tjk@iki.fi",
   "license": "Apache 2",
+  "scripts": {
+    "start": "npm run watch",
+    "build": "webpack -p --devtool source-map",
+    "watch": "webpack -d --watch"
+  },
   "dependencies": {
     "d3": "^3.4.13",
     "jquery": "^2.1.1",
     "leaflet": "^0.7.3"
   },
   "devDependencies": {
-    "gulp": "latest",
-    "gulp-browserify": "latest"
+    "webpack": "^1.12.2"
   }
 }
