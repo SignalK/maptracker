@@ -28,7 +28,6 @@
       font-family: sans-serif;
     }
   </style>
-  <script src="/signalk/stream/v1/primus.js"></script>
   <script src="dist/map.js"></script>
   <script src="/bower_components/L.EasyButton/easy-button.js"></script>
   <link rel="stylesheet" href="/bower_components/leaflet/dist/leaflet.css">
@@ -160,12 +159,11 @@
   var selfLocation;
   var selfSpeed = 0;
 
-  var signalKStream = Primus.connect("http://" + window.location.host + "/?stream=subscribe",
-      {reconnect: {
-        maxDelay: 15000,
-        minDelay: 500,
-        retries: Infinity
-      }});
+  var client = new signalk.Client();
+
+  var connection = client.connectDelta(window.location.host, onSignalK, subscribe);
+
+
 
   var subscribeCommand = {
     command: 'subscribe',
@@ -177,11 +175,9 @@
     ]
   };
 
-  signalKStream.write(subscribeCommand);
-
-  signalKStream.on('reconnect', function (spark) {
-    signalKStream.write(subscribeCommand);
-  });
+  function subscribe(signalKConnection) {
+    signalKConnection.send(JSON.stringify(subscribeCommand));
+  } 
 
   var doDraw = false;
   var frameLength = 1000 / 2;
@@ -200,7 +196,7 @@
   requestAnimationFrame(render);
 
 
-  signalKStream.on('data', function (_) {
+  function onSignalK(_) {
     var id = _.context.split('.')[1];
     var aisData = targets[id];
     if (!aisData) {
@@ -210,7 +206,7 @@
       };
 
       $.ajax({
-        url: "http://" + window.location.host + "/signalk/api/v1/vessels/" + id,
+        url: "http://" + window.location.host + "/signalk/v1/api/vessels/" + id,
         async: true,
         success: function(vesselInfo){
           aisData.vesselInfo = vesselInfo;
@@ -257,6 +253,6 @@
             ;
           });
         });
-  });
+  };
 
 </script>
