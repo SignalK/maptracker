@@ -157,13 +157,21 @@
 
   var targets = {};
   var selfLocation;
+  selfId = '';
   var selfSpeed = 0;
 
-  var client = new signalk.Client();
+  var client = new signalk.Client(window.location.hostname, window.location.port);
 
   var connection = client.connectDelta(window.location.host, onSignalK, subscribe);
 
-
+  client.getSelf().then(function(result) {
+    if (result.statusText === 'OK') {
+      var self = result.body
+      selfId = self.mmsi ||  (self.uuid ? 
+                               (self.uuid.value ? self.uuid.value : self.uuid)
+                               : '');
+    }
+  })
 
   var subscribeCommand = {
     command: 'subscribe',
@@ -218,7 +226,7 @@
             aisData.timestamp = new Date().getTime();
             if (value.path === 'navigation.position') {
               targets[id].position = new L.LatLng(value.value.latitude, value.value.longitude);
-              if (id === 'self') {
+              if (id === 'self' || id === 'selfId') {
                 selfLocation = targets[id].position;
               }
               doDraw = true;
