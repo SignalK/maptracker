@@ -203,6 +203,7 @@
 
 
   function onSignalK(_) {
+    if (_.context) {
     var id = _.context.split('.')[1];
     var aisData = targets[id];
     if (!aisData) {
@@ -259,6 +260,7 @@
             ;
           });
         });
+      };
   };
 
 </script>
