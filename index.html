@@ -225,7 +225,7 @@
             aisData.timestamp = new Date().getTime();
             if (value.path === 'navigation.position') {
               targets[id].position = new L.LatLng(value.value.latitude, value.value.longitude);
-              if (id === 'self' || id === 'selfId') {
+              if (id === 'self' || id === selfId) {
                 selfLocation = targets[id].position;
               }
               doDraw = true;
