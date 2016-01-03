@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html>
+
 <head>
   <title>SignalK Tracker</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
@@ -9,7 +10,9 @@
       margin: 0;
     }
 
-    html, body, #map {
+    html,
+    body,
+    #map {
       height: 100%;
     }
 
@@ -28,7 +31,7 @@
       font-family: sans-serif;
     }
   </style>
-  <link rel="stylesheet" href="/bower_components/Leaflet.Easybutton/src/easy-button.js"/>
+  <link rel="stylesheet" href="/bower_components/Leaflet.Easybutton/src/easy-button.js" />
   <script src="dist/map.js"></script>
   <script src="/bower_components/Leaflet.EasyButton/src/easy-button.js"></script>
   <link rel="stylesheet" href="/bower_components/leaflet/dist/leaflet.css">
@@ -36,12 +39,12 @@
 </head>
 
 <body class="leaflet-dragging">
-<div id="map"></div>
+  <div id="map"></div>
 
-<div class="targets">
-  <table class="targetlist" id="targetList">
-  </table>
-</div>
+  <div class="targets">
+    <table class="targetlist" id="targetList">
+    </table>
+  </div>
 </body>
 
 
@@ -53,9 +56,11 @@
   });
   map.setView([60.1, 24.8], 13);
 
-  new L.Control.Zoom({ position: 'topright' }).addTo(map);
+  new L.Control.Zoom({
+    position: 'topright'
+  }).addTo(map);
 
-  var homeButton = L.easyButton( '<span style="font-size: 1.5em;">&target;</span>', function(){
+  var homeButton = L.easyButton('<span style="font-size: 1.5em;">&target;</span>', function() {
     map.panTo(selfLocation);
   });
   homeButton.options.position = 'topright'
@@ -69,42 +74,45 @@
   var svg = d3.select(map.getPanes().overlayPane).append("svg");
   var g = svg.append("g").attr("class", "leaflet-zoom-hide");
 
-  var transform = d3.geo.transform({point: projectPoint});
+  var transform = d3.geo.transform({
+    point: projectPoint
+  });
   var path = d3.geo.path().projection(transform);
 
   map.on("viewreset", reset);
 
   function updateMarkers(multiPointForBounds, targetsArray) {
     var bounds = path.bounds(multiPointForBounds),
-        topLeft = bounds[0],
-        bottomRight = bounds[1];
+      topLeft = bounds[0],
+      bottomRight = bounds[1];
 
     svg.attr("width", bottomRight[0] - topLeft[0] + 20)
-        .attr("height", bottomRight[1] - topLeft[1] + 20)
-        .style("left", (topLeft[0] - 10) + "px")
-        .style("top", (topLeft[1] - 10) + "px");
+      .attr("height", bottomRight[1] - topLeft[1] + 20)
+      .style("left", (topLeft[0] - 10) + "px")
+      .style("top", (topLeft[1] - 10) + "px");
 
     g.attr("transform", "translate(" + (-topLeft[0] + 10) + "," + (-topLeft[1] + 10) + ")");
 
     var vesselColor = d3.scale.linear()
-        .domain([0.9 * selfSpeed, selfSpeed, 1.1 * selfSpeed])
-        .range(['blue', 'grey', 'red']);
+      .domain([0.9 * selfSpeed, selfSpeed, 1.1 * selfSpeed])
+      .range(['blue', 'grey', 'red']);
 
 
-    var boatData = g.selectAll('.vessel').data(targetsArray, function (d) {
+    var boatData = g.selectAll('.vessel').data(targetsArray, function(d) {
       return d.id
     });
     boatData.enter().append("polygon").attr("class", "vessel").attr('points', "0,-10 5,10 -5,10");
     boatData
-        .attr("style", function (d, i) {
-          return d.id === 'self' ? "fill:black" : "fill:" + vesselColor(d.sog);
-        })
-        .attr('transform', function (d) {
-          var point = map.latLngToLayerPoint(d.position);
-          return 'translate(' + point.x + ',' + point.y + ') rotate(' + d.cog + ')';
-        })
+      .attr("style", function(d, i) {
+        return d.id === 'self' ? "fill:black" : "fill:" + vesselColor(d.sog);
+      })
+      .attr('transform', function(d) {
+        var point = map.latLngToLayerPoint(d.position);
+        return 'translate(' + point.x + ',' + point.y + ') rotate(' + d.cog + ')';
+      })
     boatData.exit().remove();
   }
+
   function reset() {
     var targetsArray = [];
     var multiPointForBounds = {
@@ -121,16 +129,16 @@
       }
     };
 
-    targetsArray = targetsArray.sort(function (a, b) {
+    targetsArray = targetsArray.sort(function(a, b) {
       return b.sog - a.sog
     });
 
     var targetList = $('#targetList');
     targetList.empty();
-    targetsArray.forEach(function (target) {
+    targetsArray.forEach(function(target) {
       if (target.show) {
         targetList.append('<tr><td>' + target.id + '</td><td>' + getName(target) + '</td><td>' +
-            target.sog +'</td></tr>');
+          target.sog + '</td></tr>');
       }
     });
     updateMarkers(multiPointForBounds, targetsArray);
@@ -165,9 +173,8 @@
   client.getSelf().then(function(result) {
     if (result.statusText === 'OK') {
       var self = result.body
-      selfId = self.mmsi ||  (self.uuid ? 
-                               (self.uuid.value ? self.uuid.value : self.uuid)
-                               : '');
+      selfId = self.mmsi || (self.uuid ?
+        (self.uuid.value ? self.uuid.value : self.uuid) : '');
     }
   })
 
@@ -183,13 +190,13 @@
 
   function subscribe(signalKConnection) {
     signalKConnection.send(JSON.stringify(subscribeCommand));
-  } 
+  }
 
   var doDraw = false;
   var frameLength = 1000 / 2;
   var lastFrame = 0;
 
-  var render = function () {
+  var render = function() {
     if (Date.now() - lastFrame > frameLength) {
       lastFrame = Date.now()
       if (doDraw) {
@@ -204,24 +211,25 @@
 
   function onSignalK(_) {
     if (_.context) {
-    var id = _.context.split('.')[1];
-    var aisData = targets[id];
-    if (!aisData) {
-      targets[id] = aisData = {
-        id: id,
-        show: true
-      };
+      var id = _.context.split('.')[1];
+      var aisData = targets[id];
+      if (!aisData) {
+        targets[id] = aisData = {
+          id: id,
+          show: true
+        };
 
-      $.ajax({
-        url: "http://" + window.location.host + "/signalk/v1/api/vessels/" + id,
-        async: true,
-        success: function(vesselInfo){
-          aisData.vesselInfo = vesselInfo;
-      }});
-    };
-    _.updates
-        .forEach(function (update) {
-          update.values.forEach(function (value) {
+        $.ajax({
+          url: "http://" + window.location.host + "/signalk/v1/api/vessels/" + id,
+          async: true,
+          success: function(vesselInfo) {
+            aisData.vesselInfo = vesselInfo;
+          }
+        });
+      };
+      _.updates
+        .forEach(function(update) {
+          update.values.forEach(function(value) {
             aisData.timestamp = new Date().getTime();
             if (value.path === 'navigation.position') {
               targets[id].position = new L.LatLng(value.value.latitude, value.value.longitude);
@@ -229,13 +237,11 @@
                 selfLocation = targets[id].position;
               }
               doDraw = true;
-            }
-            ;
+            };
             if (value.path === 'navigation.courseOverGroundTrue') {
               aisData.cog = value.value;
               doDraw = true;
-            }
-            ;
+            };
             if (value.path === 'navigation.speedOverGround') {
               if (value.value === 0 || typeof value.value === 'undefined') {
                 aisData.show = false;
@@ -256,11 +262,9 @@
               }
               aisData.vesselInfo.name.value = value.value;
               doDraw = true;
-            }
-            ;
+            };
           });
         });
-      };
+    };
   };
-
 </script>
