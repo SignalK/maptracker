@@ -15,6 +15,7 @@
     "signalk-client": "signalk/signalk-js-client"
   },
   "devDependencies": {
+    "json-loader": "^0.5.4",
     "webpack": "^1.12.2"
   }
 }
