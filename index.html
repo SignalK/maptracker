@@ -209,6 +209,8 @@
   requestAnimationFrame(render);
 
 
+  var rad2degrees = Qty.swiftConverter('rad', 'deg');
+
   function onSignalK(_) {
     if (_.context) {
       var id = _.context.split('.')[1];
@@ -239,7 +241,7 @@
               doDraw = true;
             };
             if (value.path === 'navigation.courseOverGroundTrue') {
-              aisData.cog = value.value;
+              aisData.cog = rad2degrees(value.value);
               doDraw = true;
             };
             if (value.path === 'navigation.speedOverGround') {
