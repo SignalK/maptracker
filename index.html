@@ -137,7 +137,7 @@
     targetList.empty();
     targetsArray.forEach(function(target) {
       if (target.show) {
-        targetList.append('<tr><td>' + target.id + '</td><td>' + getName(target) + '</td><td>' +
+        targetList.append('<tr><td>' + target.shortId + '</td><td>' + getName(target) + '</td><td>' +
           target.sog + '</td></tr>');
       }
     });
@@ -211,13 +211,30 @@
 
   var rad2degrees = Qty.swiftConverter('rad', 'deg');
 
+  function getId(context) {
+    var result = context.split('[')[1];
+    if (result) {
+      result = result.split(']')[0];
+      if (result) {
+        return result
+      }
+    }
+    return context.split('.')[1];
+  }
+
+  function getShortId(id) {
+    var lastColonIndex = id.lastIndexOf(':');
+    return id.substring(lastColonIndex+1);
+  }
+
   function onSignalK(_) {
     if (_.context) {
-      var id = _.context.split('.')[1];
+      var id = getId(_.context)
       var aisData = targets[id];
       if (!aisData) {
         targets[id] = aisData = {
           id: id,
+          shortId: getShortId(id),
           show: true
         };
 
