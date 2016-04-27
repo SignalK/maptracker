@@ -67,8 +67,15 @@
   homeButton.addTo(map)
 
   L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png', {
-    attribution: '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
-  }).addTo(map);
+      attribution: '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
+    }).addTo(map);
+
+  L.tileLayer.wms("https://extranet.liikennevirasto.fi/inspirepalvelu/avoin/wms", {
+    layers: 'vaylat',
+    format: 'image/png',
+    transparent: true,
+    attribution: "Liikennevirasto"
+}).addTo(map);
 
 
   var svg = d3.select(map.getPanes().overlayPane).append("svg");
@@ -168,7 +175,8 @@
 
   var client = new signalk.Client(window.location.hostname, window.location.port);
 
-  var connection = client.connectDelta(window.location.host, onSignalK, subscribe);
+  var log = function (_) { console.log(_)}
+  var connection = client.connectDelta(window.location.host, onSignalK, log, log, log, 'all');
 
   client.getSelf().then(function(result) {
     if (result.statusText === 'OK') {
@@ -177,20 +185,6 @@
         (self.uuid.value ? self.uuid.value : self.uuid) : '');
     }
   })
-
-  var subscribeCommand = {
-    command: 'subscribe',
-    paths: [
-      'navigation.courseOverGroundTrue',
-      'navigation.speedOverGround',
-      'navigation.position',
-      'name'
-    ]
-  };
-
-  function subscribe(signalKConnection) {
-    signalKConnection.send(JSON.stringify(subscribeCommand));
-  }
 
   var doDraw = false;
   var frameLength = 1000 / 2;
