@@ -14,5 +14,9 @@ module.exports = {
     ]
   },
   plugins: [
+  ],
+  externals: [
+    {'options': "Options"},
+    {'tls': "tls"} 
   ]
 }
