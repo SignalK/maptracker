@@ -61,7 +61,11 @@
   }).addTo(map);
 
   var homeButton = L.easyButton('<span style="font-size: 1.5em;">&target;</span>', function() {
-    map.panTo(selfLocation);
+    if (selfLocation) {
+      map.panTo(selfLocation);
+    } else {
+      alert("No position for 'self' available. Using self id " + selfId)
+    }
   });
   homeButton.options.position = 'topright'
   homeButton.addTo(map)
@@ -176,13 +180,14 @@
   var client = new signalk.Client(window.location.hostname, window.location.port);
 
   var log = function (_) { console.log(_)}
-  var connection = client.connectDelta(window.location.host, onSignalK, log, log, log, 'all');
+  var connection = client.connectDelta(window.location.host, onSignalK, log, log, log, log, 'all');
 
   client.getSelf().then(function(result) {
     if (result.statusText === 'OK') {
       var self = result.body
       selfId = self.mmsi || (self.uuid ?
         (self.uuid.value ? self.uuid.value : self.uuid) : '');
+      console.log("selfId=" + selfId)
     }
   })
 
