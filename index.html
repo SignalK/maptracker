@@ -115,7 +115,7 @@
     boatData.enter().append("polygon").attr("class", "vessel").attr('points', "0,-10 5,10 -5,10");
     boatData
       .attr("style", function(d, i) {
-        return d.id === 'self' ? "fill:black" : "fill:" + vesselColor(d.sog);
+        return isSelf(d.id) ? "fill:black" : "fill:" + vesselColor(d.sog);
       })
       .attr('transform', function(d) {
         var point = map.latLngToLayerPoint(d.position);
@@ -221,6 +221,10 @@
     return context.split('.')[1];
   }
 
+  function isSelf(id) {
+    return id === selfId || id === 'self'
+  }
+
   function getShortId(id) {
     var lastColonIndex = id.lastIndexOf(':');
     return id.substring(lastColonIndex+1);
@@ -251,7 +255,7 @@
             aisData.timestamp = new Date().getTime();
             if (value.path === 'navigation.position') {
               targets[id].position = new L.LatLng(value.value.latitude, value.value.longitude);
-              if (id === 'self' || id === selfId) {
+              if (isSelf(id)) {
                 selfLocation = targets[id].position;
               }
               doDraw = true;
@@ -266,7 +270,7 @@
               }
               aisData.sog = (value.value * 1.94384).toFixed(2);
               doDraw = true;
-              if (id === 'self') {
+              if (isSelf(id)) {
                 selfSpeed = (value.value * 1.94384).toFixed(2);
               }
             }
