@@ -1,8 +1,12 @@
 {
-  "name": "signalk-maptracker",
+  "name": "maptracker",
   "version": "0.0.1",
   "author": "tjk@iki.fi",
   "license": "Apache 2",
+  "keywords": [
+    "signalk-webapp"
+  ],
+  "description": "Signal K demo map page with AIS target display",
   "scripts": {
     "start": "npm run watch",
     "build": "webpack -p --devtool source-map",
