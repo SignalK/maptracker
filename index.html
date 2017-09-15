@@ -182,14 +182,12 @@
   var log = function (_) { console.log(_)}
   var connection = client.connectDelta(window.location.host, onSignalK, log, log, log, log, 'all');
 
-  client.getSelf().then(function(result) {
+  client.getSelfId().then(function(result) {
     if (result.statusText === 'OK') {
-      var self = result.body
-      selfId = self.mmsi || (self.uuid ?
-        (self.uuid.value ? self.uuid.value : self.uuid) : '');
+      selfId = result.body
       console.log("selfId=" + selfId)
     }
-  })
+  })  
 
   var doDraw = false;
   var frameLength = 1000 / 2;
