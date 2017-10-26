@@ -70,76 +70,76 @@
   homeButton.options.position = 'topright'
   homeButton.addTo(map)
 
-	// Look if world coastline map ist locally available and use it
-	var tilemapUrl = false;
-	var tilemapMeta = false;
-	$.ajax({
-		// path of list of maps in Signal K server
+  // Look if world coastline map ist locally available and use it
+  var tilemapUrl = false;
+  var tilemapMeta = false;
+  $.ajax({
+    // path of list of maps in Signal K server
     url: "/signalk/v1/api/resources/charts",
     async: false,
-		success: function(data) {
-			// Not the data we expected? URL wrong?
-			if (data === null) {
-				console.log("Signal K server not found.")
-				return;
-			}
-			if (typeof data !== 'object') {
-				console.log("Signal K server not found.")
-				return;
-			}
+    success: function(data) {
+      // Not the data we expected? URL wrong?
+      if (data === null) {
+        console.log("Signal K server not found.")
+        return;
+      }
+      if (typeof data !== 'object') {
+        console.log("Signal K server not found.")
+        return;
+      }
 
-			// Is the world coastline map installed?
-			if (typeof data['world-coastline.mbtiles'] !== 'undefined') {
-				// this will be "/charts/world-coastline.mbtiles/{z}/{x}/{y}"
-				console.log("Show the world coastline map.")
-				tilemapUrl = data['world-coastline.mbtiles'].tilemapUrl;
-				tilemapMeta = {
-					attribution: '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors',
-					maxZoom: 11,
-					tileSize: 1024,
-					zoomOffset: -2,
-				};
-				return;
-			}
-			// Is any other map installed on Signal K server?
-			if(!$.isEmptyObject(data)) {
-				// Take one map we randomly find in list of maps
-				$.each(data, function(index, firstMap) {
-					console.log("Map used: ", firstMap.identifier);
-					tilemapUrl = firstMap.tilemapUrl;
-					tilemapMeta = {
-						attribution: '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors',
-						maxZoom: firstMap.maxzoom,
-					};
-					// exit each loop
-					return false;
-				});
-				return;
-			}
-		}
-	});
+      // Is the world coastline map installed?
+      if (typeof data['world-coastline.mbtiles'] !== 'undefined') {
+        // this will be "/charts/world-coastline.mbtiles/{z}/{x}/{y}"
+        console.log("Show the world coastline map.")
+        tilemapUrl = data['world-coastline.mbtiles'].tilemapUrl;
+        tilemapMeta = {
+          attribution: '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors',
+          maxZoom: 11,
+          tileSize: 1024,
+          zoomOffset: -2,
+        };
+        return;
+      }
+      // Is any other map installed on Signal K server?
+      if(!$.isEmptyObject(data)) {
+        // Take one map we randomly find in list of maps
+        $.each(data, function(index, firstMap) {
+          console.log("Map used: ", firstMap.identifier);
+          tilemapUrl = firstMap.tilemapUrl;
+          tilemapMeta = {
+            attribution: '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors',
+            maxZoom: firstMap.maxzoom,
+          };
+          // exit each loop
+          return false;
+        });
+        return;
+      }
+    }
+  });
 
-	// Fallback to Internet tiles
-	if (!tilemapUrl) {
-		tilemapUrl = "http://{s}.tile.osm.org/{z}/{x}/{y}.png";
-		tilemapMeta = {
-			attribution: '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors',
-			maxZoom: 13,
-		};
-	}
+  // Fallback to Internet tiles
+  if (!tilemapUrl) {
+    tilemapUrl = "http://{s}.tile.osm.org/{z}/{x}/{y}.png";
+    tilemapMeta = {
+      attribution: '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors',
+      maxZoom: 13,
+    };
+  }
 
   L.tileLayer(tilemapUrl, tilemapMeta).addTo(map);
 
 
-	/*
-	// Add a strange Finnish layer
+  /*
+  // Add a strange Finnish layer
   L.tileLayer.wms("https://extranet.liikennevirasto.fi/inspirepalvelu/avoin/wms", {
     layers: 'vaylat',
     format: 'image/png',
     transparent: true,
     attribution: "Liikennevirasto"
-	}).addTo(map);
-	*/
+  }).addTo(map);
+  */
 
   var svg = d3.select(map.getPanes().overlayPane).append("svg");
   var g = svg.append("g").attr("class", "leaflet-zoom-hide");
@@ -241,7 +241,7 @@
   var log = function (_) { console.log(_)}
   var connection = client.connectDelta(window.location.host, onSignalK, log, log, log, log, 'all');
 
-	client.getSelfId().then(function(result) {
+  client.getSelfId().then(function(result) {
     if (result.statusText === 'OK') {
       selfId = result.body
       console.log("selfId=" + selfId)
