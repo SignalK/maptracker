@@ -78,8 +78,20 @@
     url: "/signalk/v1/api/resources/charts",
     async: false,
 		success: function(data) {
+			// Not the data we expected? URL wrong?
+			if (data === null) {
+				console.log("Signal K server not found.")
+				return;
+			}
+			if (typeof data !== 'object') {
+				console.log("Signal K server not found.")
+				return;
+			}
+
+			// Is the world coastline map installed?
 			if (typeof data['world-coastline.mbtiles'] !== 'undefined') {
 				// this will be "/charts/world-coastline.mbtiles/{z}/{x}/{y}"
+				console.log("Show the world coastline map.")
 				tilemapUrl = data['world-coastline.mbtiles'].tilemapUrl;
 				tilemapMeta = {
 					attribution: '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors',
@@ -87,6 +99,22 @@
 					tileSize: 1024,
 					zoomOffset: -2,
 				};
+				return;
+			}
+			// Is any other map installed on Signal K server?
+			if(!$.isEmptyObject(data)) {
+				// Take one map we randomly find in list of maps
+				$.each(data, function(index, firstMap) {
+					console.log("Map used: ", firstMap.identifier);
+					tilemapUrl = firstMap.tilemapUrl;
+					tilemapMeta = {
+						attribution: '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors',
+						maxZoom: firstMap.maxzoom,
+					};
+					// exit each loop
+					return false;
+				});
+				return;
 			}
 		}
 	});
@@ -213,11 +241,9 @@
   var log = function (_) { console.log(_)}
   var connection = client.connectDelta(window.location.host, onSignalK, log, log, log, log, 'all');
 
-  client.getSelf().then(function(result) {
+	client.getSelfId().then(function(result) {
     if (result.statusText === 'OK') {
-      var self = result.body
-      selfId = self.mmsi || (self.uuid ?
-        (self.uuid.value ? self.uuid.value : self.uuid) : '');
+      selfId = result.body
       console.log("selfId=" + selfId)
     }
   })
