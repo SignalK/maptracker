@@ -54,7 +54,7 @@
     zoom: 4,
     zoomControl: false
   });
-  map.setView([60.1, 24.8], 13);
+  map.setView([60.1, 24.8], 4);
 
   new L.Control.Zoom({
     position: 'topright'
@@ -70,16 +70,66 @@
   homeButton.options.position = 'topright'
   homeButton.addTo(map)
 
-  L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png', {
-      attribution: '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
-    }).addTo(map);
+  // Look if world coastline map ist locally available and use it
+  var tilemapUrl = false;
+  var tilemapMeta = false;
+  $.ajax({
+    // path of list of maps in Signal K server
+    url: "/signalk/v1/api/resources/charts",
+    async: false,
+    success: function(data) {
+      // Not the data we expected? URL wrong?
+      if (data === null) {
+        console.log("Signal K server not found.")
+        return;
+      }
+      if (typeof data !== 'object') {
+        console.log("Signal K server not found.")
+        return;
+      }
 
-  L.tileLayer.wms("https://extranet.liikennevirasto.fi/inspirepalvelu/avoin/wms", {
-    layers: 'vaylat',
-    format: 'image/png',
-    transparent: true,
-    attribution: "Liikennevirasto"
-}).addTo(map);
+      // Is the world coastline map installed?
+      if (typeof data['world-coastline.mbtiles'] !== 'undefined') {
+        // this will be "/charts/world-coastline.mbtiles/{z}/{x}/{y}"
+        console.log("Show the world coastline map.")
+        tilemapUrl = data['world-coastline.mbtiles'].tilemapUrl;
+        tilemapMeta = {
+          attribution: '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors',
+          maxZoom: 11,
+          tileSize: 1024,
+          zoomOffset: -2,
+        };
+        return;
+      }
+      // Is any other map installed on Signal K server?
+      if(!$.isEmptyObject(data)) {
+        // Take one map we randomly find in list of maps
+        $.each(data, function(index, firstMap) {
+          console.log("Map used: ", firstMap.identifier);
+          tilemapUrl = firstMap.tilemapUrl;
+          tilemapMeta = {
+            // We don't know the authors of an unknown map
+            attribution: '',
+            maxZoom: firstMap.maxzoom,
+          };
+          // exit each loop
+          return false;
+        });
+        return;
+      }
+    }
+  });
+
+  // Fallback to Internet tiles
+  if (!tilemapUrl) {
+    tilemapUrl = "http://{s}.tile.osm.org/{z}/{x}/{y}.png";
+    tilemapMeta = {
+      attribution: '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors',
+      maxZoom: 13,
+    };
+  }
+
+  L.tileLayer(tilemapUrl, tilemapMeta).addTo(map);
 
 
   var svg = d3.select(map.getPanes().overlayPane).append("svg");
@@ -187,7 +237,7 @@
       selfId = result.body
       console.log("selfId=" + selfId)
     }
-  })  
+  })
 
   var doDraw = false;
   var frameLength = 1000 / 2;
