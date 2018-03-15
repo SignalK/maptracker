@@ -12,14 +12,13 @@
     "build": "webpack -p --devtool source-map",
     "watch": "webpack -d --watch"
   },
-  "dependencies": {
+  "dependencies": {},
+  "devDependencies": {
     "d3": "^3.4.13",
     "jquery": "^2.1.1",
     "js-quantities": "^1.6.0",
     "leaflet": "^0.7.3",
-    "@signalk/client": "^0.1.1"
-  },
-  "devDependencies": {
+    "@signalk/client": "^0.1.1",
     "json-loader": "^0.5.4",
     "webpack": "^1.12.2"
   }
