@@ -322,7 +322,7 @@
                 selfSpeed = (value.value * 1.94384).toFixed(2);
               }
             }
-            if (value.path === 'name') {
+            if (value.path === '' && value.value.name ) {
               if (!aisData.vesselInfo || !aisData.vesselInfo.name) {
                 aisData.vesselInfo = {
                   name: {
@@ -330,7 +330,7 @@
                   }
                 };
               }
-              aisData.vesselInfo.name.value = value.value;
+              aisData.vesselInfo.name.value = value.value.name;
               doDraw = true;
             };
           });
