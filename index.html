@@ -302,8 +302,12 @@
             aisData.timestamp = new Date().getTime();
             if (value.path === 'navigation.position') {
               targets[id].position = new L.LatLng(value.value.latitude, value.value.longitude);
-              if (isSelf(id)) {
+              if (isSelf(_.context)) {
+                var previousSelf = selfLocation
                 selfLocation = targets[id].position;
+                if (!previousSelf) {
+                  map.panTo(selfLocation)
+                }
               }
               doDraw = true;
             };
