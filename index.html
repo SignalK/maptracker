@@ -232,7 +232,7 @@
   var connection = client.connectDelta(window.location.host, onSignalK, log, log, log, log, 'all');
 
   client.getSelfId().then(function(result) {
-    if (result.statusText === 'OK') {
+    if (result.status === 200) {
       selfId = result.body
       console.log("selfId=" + selfId)
     }
