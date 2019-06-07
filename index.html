@@ -225,8 +225,8 @@
   var selfLocation;
   selfId = '';
   var selfSpeed = 0;
-
-  var client = new signalk.Client(window.location.hostname, window.location.port);
+  var useSsl = window.location.protocol === 'https:'
+  var client = new signalk.Client(window.location.hostname, window.location.port, useSsl);
 
   var log = function (_) { console.log(_)}
   var connection = client.connectDelta(window.location.host, onSignalK, log, log, log, log, 'all');
@@ -289,7 +289,7 @@
         };
 
         $.ajax({
-          url: "http://" + window.location.host + "/signalk/v1/api/vessels/" + id,
+          url: window.location.protocol + "//" + window.location.host + "/signalk/v1/api/vessels/" + id,
           async: true,
           success: function(vesselInfo) {
             aisData.vesselInfo = vesselInfo;
